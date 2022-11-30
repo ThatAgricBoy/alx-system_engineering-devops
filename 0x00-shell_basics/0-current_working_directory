@@ -1,2 +1,3 @@
 #!/bin/bash
-echo "$pwd"
+path=$pwd
+echo path
