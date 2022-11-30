@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "Script execute from: ${PWD}"
+echo "$PWD"
