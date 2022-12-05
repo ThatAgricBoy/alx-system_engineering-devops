@@ -1,2 +1,2 @@
 #!/bin/bash
-find . -type d -not -nmae '.' | wc -l
+tree -a .
