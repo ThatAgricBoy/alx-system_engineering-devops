@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Script to print the string Best School using until
+
+counter=1
+until [ $counter -gt 10 ]
+do
+	echo "Best School"
+	((counter++))
+done
