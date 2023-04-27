@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Using if and while statement constrcut to print
+
+counter=1
+
+while [ $counter -le 8 ]
+do
+        if [ $counter -eq 4 ]
+        then
+                echo "bad luck"
+	elif [ $counter -eq 8 ]
+	then
+		echo "good luck"
+	fi
+
+        echo "Best School"
+
+        ((counter++))
+done
+
