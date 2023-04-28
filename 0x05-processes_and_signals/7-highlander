@@ -6,7 +6,7 @@ function invincible {
 	exit 0
 }
 
-trap invisible SIGTERM
+trap invincible SIGTERM
 
 while true; do
 	echo "To infinity and beyond"
