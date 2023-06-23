@@ -1,5 +1,3 @@
-# This manifest creates a file with some permissions
-
 file { '/tmp/school':
   ensure  => present,
   content => 'I love Puppet',
