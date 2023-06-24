@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-hostname="35.153.98.251"
-private_key="~/.ssh/school"
-user="ubuntu"
-
-ssh -i "$private_key" -l "$user" "$hostname" "ls -l"
