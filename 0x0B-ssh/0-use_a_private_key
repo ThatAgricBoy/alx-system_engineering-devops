@@ -2,7 +2,7 @@
 # How to connect to a server
 
 hostname="35.153.98.251"
-private_key="~/.ssh/school"
+#private_key="~/.ssh/school"
 user="ubuntu"
 
-ssh "$user"@"$hostname" -i "$private_key"
+ssh "$user"@"$hostname" -i ~/.ssh/school
