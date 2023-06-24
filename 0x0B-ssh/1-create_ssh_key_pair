@@ -4,8 +4,7 @@
 private_key_file="school"
 key_bits=4096
 passphrase="betty"
-email="samueljohn3999@gmail.com"
 # Generate RSA key pair
-ssh-keygen -t rsa -b "$key_bits" -C "$email" -f "$private_key_file" -N "$passphrase"
+ssh-keygen -t rsa -b "$key_bits" -C "samueljohn3999@gmail.com" -f "$private_key_file" -N "$passphrase"
 
 echo "RSA key pair created successfully."
