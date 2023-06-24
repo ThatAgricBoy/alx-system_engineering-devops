@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# How to create an RSA Key pair
+
+ssh-keygen -t rsa -b 4096 -C "samueljohn3999@gmail.com"
+
+echo "school"
+
+echo "betty"
