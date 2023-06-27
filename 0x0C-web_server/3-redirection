@@ -1,35 +1,31 @@
 #!/usr/bin/env bash
-# Install the web server 'nginx' on the server and perform some configurations
-sudo apt-get update -y
-sudo apt-get upgrade -y
-sudo apt-get install nginx -y
-ufw allow 'Nginx HTTP'
-echo "Hello World!" > /var/www/html/index.html
+# Installs, configures, and starts the server
 
-new_website=\
+apt-get update
+apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
+mkdir -p /var/www/html/
+sudo chmod -R 755 /var/www
+echo 'Hello World!' > /var/www/html/index.html
+SERVER_CONFIG=\
 "server {
-        listen 80;
-        listen [::]:80;
-
-        server_name tmaworldwide.tech;
-
-        root /var/www/html;
-        index index.html index.htm index.nginx-debian.html 404.html;
-        
-        location / {
-                try_files $uri $uri/ =404;
-        }
-
-        if ($request_filename ~ redirect_me){
-            rewrite ^ https://www.youtube.com/@tpauldike permanent;
-        }
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /var/www/html;
+	index index.html index.htm index.nginx-debian.html;
+	server_name _;
+	location / {
+		try_files \$uri \$uri/ =404;
+	}
+	if (\$request_filename ~ redirect_me){
+		rewrite ^ https://sketchfab.com/bluepeno/models permanent;
+	}
 }"
 
-echo "$new_website" > /etc/nginx/sites-available/new_website
+bash -c "echo -e '$SERVER_CONFIG' > /etc/nginx/sites-enabled/default"
 
-if [ "$(pgrep nginx)" -le 0 ];
-then
-    sudo service nginx start
+if [ "$(pgrep -c nginx)" -le 0 ]; then
+	service nginx start
 else
-    sudo service nginx restart
-fi;
+	service nginx restart
+fi
