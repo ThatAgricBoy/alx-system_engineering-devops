@@ -11,7 +11,7 @@ new_website=\
         listen 80;
         listen [::]:80;
 
-        server_name codeharvest.tech;
+        server_name tmaworldwide.tech;
 
         root /var/www/html;
         index index.html index.htm index.nginx-debian.html 404.html;
@@ -21,7 +21,7 @@ new_website=\
         }
 
         if ($request_filename ~ redirect_me){
-            rewrite ^ https://github.com/ThatAgricBoy permanent;
+            rewrite ^ https://www.youtube.com/@tpauldike permanent;
         }
 }"
 
