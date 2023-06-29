@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
-# Script that starts an Apache server.
-sudo service apache2 start
+# Fix Apache to return "Hello Holberton" page
+echo "DirectoryIndex index.html" >> /etc/apache2/sites-available/000-default.conf
+echo "Hello Holberton" > /var/www/html/index.html
+service apache2 restart
