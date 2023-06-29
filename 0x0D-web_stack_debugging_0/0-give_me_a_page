@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Fix Apache to return "Hello Holberton" page
-echo "DirectoryIndex index.html" >> /etc/apache2/sites-available/000-default.conf
+# Script to start apache server.
 echo "Hello Holberton" > /var/www/html/index.html
 service apache2 restart
