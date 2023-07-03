@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Script that configures nginx so that its HTTP response
+# contains a custom header (on web-01 and web-02
+# Update the system
+sudo apt update
+sudo apt upgrade -y
+
+# Install Nginx
+sudo apt install nginx -y
+
+# Add the custom header configuration
+sudo sed -i '/server_name _;/a \\n\tadd_header X-Served-By $hostname;' /etc/nginx/sites-available/default
+
+# Restart Nginx
+sudo service nginx restart
