@@ -1,31 +1,34 @@
 #!/usr/bin/env bash
-# Configure Nginx so that its HTTP response contains a custom header (on web-01 and web-02)
+# configure web-02 to be identical to web-01
 # The name of the custom HTTP header must be X-Served-By
 # The value of the custom HTTP header must be the hostname of the server Nginx is running on
-sudo apt-get update
+#sudo sed -i 's/server_name _;.*/server_name _;\n\tadd_header X-Served-By \$hostname;/' /etc/nginx/sites-enabled/default 
+sudo apt-get -y update
 sudo apt-get -y install nginx
-
-# configure firewall to allow request through port 80
 sudo ufw allow 'Nginx HTTP'
-
-sudo mkdir -p /var/www/html
-
-# change permissions to allow us to easily create files in this directory
+sudo mkdir -p /var/www/html /var/www/error
 sudo chmod -R 755 /var/www
+echo 'Hello World!' > /var/www/html/index.html
+echo "Ceci n'est pas une page" > /var/www/html/404.html
+server_config=\
+"server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /var/www/html;
+	index index.html index.htm index.nginx-debian.html;
+	server_name _;
+	add_header X-Served-By \$hostname;
+	location / {
+		try_files \$uri \$uri/ =404;
+	}
+	if (\$request_filename ~ redirect_me){
+		rewrite ^ https://youtube.com permanent;
+	}
+	error_page 404 /404.html;
+	location = /404.html {
+		internal;
+	}
+}"
 
-#  create the index page
-echo 'Hello World!' |sudo tee  /var/www/html/index.html
-
-# create a webpage for error 404
-echo "Ceci n'est pas une page" |sudo tee /var/www/html/404.html
-
-# code to configure redirect for a single page(/redirect_me) and add header to display hostname
-string_for_replacement="server_name _;\n\tadd_header X-Served-By \$hostname;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com permanent;"
-sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
-
-# code to configure redirect for 404 error page
-string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
-sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
-
-# restart the web server after updating the settings
+echo "$server_config" > /etc/nginx/sites-enabled/default
 sudo service nginx restart
