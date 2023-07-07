@@ -41,7 +41,7 @@ frontend 218715-web
     	# Redirect if HTTPS is not used
     	redirect scheme https code 301 if !{ ssl_fc }
 
-    	default_backend 202812-web_servers
+    	default_backend 218715-web_servers
 
 backend 218715-web_servers
     	balance roundrobin
