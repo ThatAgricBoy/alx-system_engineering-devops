@@ -20,6 +20,7 @@ global
 defaults
 	log	global
 	mode	http
+	option forwardfor
 	option	httplog
 	option	dontlognull
         timeout connect 5000
@@ -33,18 +34,16 @@ defaults
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
 
-frontend  max-frontend-http
-        bind *:80
-        mode http
-		http-request set-header X-Forwarded-Proto http
-        default_backend drkgaphar-backend
+frontend 202812-web
+    	bind *:80
+    	bind *:443 ssl crt /etc/ssl/www.codeharvest.tech/www.codeharvest.tech.pem
 
-frontend max-frontend-https
-	bind *:443 ssl crt /etc/haproxy/certs/drkgaphar.tech.pem
-	http-request set-header X-Forwarded-Proto https
-	default_backend drkgaphar-backend
+    	# Redirect if HTTPS is not used
+    	redirect scheme https code 301 if !{ ssl_fc }
 
-backend max-backend
-        balance roundrobin
-        server 218715-web-02 3.85.168.10:80 check
-        server 218715-web-01 54.146.78.93:80 check
+    	default_backend 202812-web_servers
+
+backend 202812-web_servers
+    	balance roundrobin
+    	server web-01 54.146.78.93:80 check
+    	server web-02 3.85.168.10:80 check
