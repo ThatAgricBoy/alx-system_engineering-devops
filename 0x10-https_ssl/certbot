@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Installs and cretes an SSL Certificate using certbot
+# This script assumes you have HAProxy installed
+# Reference: https://serversforhackers.com/c/letsencrypt-with-haproxy
+
+# Check if running as root user
+if [[ $EUID -ne 0 ]]; then
+	echo 'Please run this script as root or sudo'
+	exit 1
+fi
+
+# Check if Certbot is not installed
+if ! command -v certbot &> /dev/null; then
+    # Install Certbot
+    echo "Installing Certbot..."
+    apt-get update
+    apt-get install -y certbot
+else
+    echo "Certbot is already installed."
+fi
+
+# Create SSL Certificate
+fuser -k 80/tcp			# shutdown whatever program is listening at port 80/tcp
+service haproxy stop	# Stop HAProxy
+
+if [ $# -eq 2 ]; then	
+	# Generate the certificate
+	certbot certonly --standalone -d "$1" --non-interactive --agree-tos --email "$2"
+
+	# Create PEM file to use in HAProxy
+	mkdir -p /etc/ssl/"$1"
+	cat /etc/letsencrypt/live/"$1"/fullchain.pem /etc/letsencrypt/live/"$1"/privkey.pem | tee /etc/ssl/"$1"/"$1.pem"
+else
+	SCRIPT_NAME=$(basename "$0")
+	echo "Usage: ./$SCRIPT_NAME YOUR_DOMAIN YOUR_EMAIL"
+	echo "eg: ./$SCRIPT_NAME www.example.com youremail@gmail.com"
+fi
+
+# Start HAProxy
+service haproxy start
