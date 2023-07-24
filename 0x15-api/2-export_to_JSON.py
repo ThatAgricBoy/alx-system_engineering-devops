@@ -1,23 +1,29 @@
 #!/usr/bin/python3
-"""Using what you did in the task #0,
-extend your Python script to export data in the JSON format."""
+"""Accessing a REST API for todo lists of employees"""
+
 import json
-from requests import get
-from sys import argv
+import requests
+import sys
 
 
-def jsonWrite(user):
-    data = get('https://jsonplaceholder.typicode.com/todos?userId={}'.format(
-        user)).json()
-    name = get('https://jsonplaceholder.typicode.com/users/{}'.format(
-        user)).json().get('username')
-    ordered = []
-    for line in data:
-        ordered.append({"task": line.get('title'), "completed":
-                        line.get('completed'), "username": name})
-    with open('{}.json'.format(user), 'w') as f:
-        json.dump({user: ordered}, f)
+if __name__ == '__main__':
+    employeeId = sys.argv[1]
+    baseUrl = "https://jsonplaceholder.typicode.com/users"
+    url = baseUrl + "/" + employeeId
 
+    response = requests.get(url)
+    username = response.json().get('username')
 
-if __name__ == "__main__":
-    jsonWrite(int(argv[1]))
+    todoUrl = url + "/todos"
+    response = requests.get(todoUrl)
+    tasks = response.json()
+
+    dictionary = {employeeId: []}
+    for task in tasks:
+        dictionary[employeeId].append({
+            "task": task.get('title'),
+            "completed": task.get('completed'),
+            "username": username
+        })
+    with open('{}.json'.format(employeeId), 'w') as filename:
+        json.dump(dictionary, filename)
