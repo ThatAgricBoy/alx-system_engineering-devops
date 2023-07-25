@@ -1,18 +1,29 @@
 #!/usr/bin/python3
-"""Exports to-do list information of all employees to JSON format."""
+"""
+Using https://jsonplaceholder.typicode.com
+gathers data from API and exports it to JSON file
+Implemented using recursion
+"""
 import json
 import requests
 
-if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/"
-    users = requests.get(url + "users").json()
+API = "https://jsonplaceholder.typicode.com"
 
-    with open("todo_all_employees.json", "w") as jsonfile:
-        json.dump({
-            u.get("id"): [{
-                "task": t.get("title"),
-                "completed": t.get("completed"),
-                "username": u.get("username")
-            } for t in requests.get(url + "todos",
-                                    params={"userId": u.get("id")}).json()]
-            for u in users}, jsonfile)
+if __name__ == '__main__':
+    users_res = requests.get('{}/users'.format(API)).json()
+    todos_res = requests.get('{}/todos'.format(API)).json()
+
+    users_data = {
+        str(user['id']): [
+            {
+                'username': user['username'],
+                'task': todo['title'],
+                'completed': todo['completed']
+            }
+            for todo in todos_res if todo['userId'] == user['id']
+        ]
+        for user in users_res
+    }
+
+    with open('todo_all_employees.json', 'w') as file:
+        json.dump(users_data, file)
