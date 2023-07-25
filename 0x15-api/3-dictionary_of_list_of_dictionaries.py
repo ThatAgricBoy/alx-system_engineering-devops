@@ -1,31 +1,29 @@
 #!/usr/bin/python3
-"""Accessing a REST API for todo lists of employees"""
-
+"""
+Using https://jsonplaceholder.typicode.com
+gathers data from API and exports it to JSON file
+Implemented using recursion
+"""
 import json
 import requests
-import sys
 
+API = "https://jsonplaceholder.typicode.com"
 
 if __name__ == '__main__':
-    url = "https://jsonplaceholder.typicode.com/users"
+    users_res = requests.get('{}/users'.format(API)).json()
+    todos_res = requests.get('{}/todos'.format(API)).json()
 
-    response = requests.get(url)
-    users = response.json()
+    users_data = {
+        str(user['id']): [
+            {
+                'username': user['username'],
+                'task': todo['title'],
+                'completed': todo['completed']
+            }
+            for todo in todos_res if todo['userId'] == user['id']
+        ]
+        for user in users_res
+    }
 
-    dictionary = {}
-    for user in users:
-        user_id = user.get('id')
-        username = user.get('username')
-        url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
-        url = url + '/todos/'
-        response = requests.get(url)
-        tasks = response.json()
-        dictionary[user_id] = []
-        for task in tasks:
-            dictionary[user_id].append({
-                "task": task.get('title'),
-                "completed": task.get('completed'),
-                "username": username
-            })
     with open('todo_all_employees.json', 'w') as file:
-        json.dump(dictionary, file)
+        json.dump(users_data, file)
