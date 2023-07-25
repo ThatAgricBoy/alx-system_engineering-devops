@@ -1,35 +1,37 @@
 #!/usr/bin/python3
-""" Python to get data from an API and convert to Json"""
+"""
+extending task 0 to export to csv
+"""
 import json
+import re
 import requests
 import sys
 
+# define the API url
+API = "https://jsonplaceholder.typicode.com"
 
-def get_user_data(user_id):
-    url_to_user = 'https://jsonplaceholder.typicode.com/users/' + str(user_id)
-    res = requests.get(url_to_user)
-    user_data = res.json()
 
-    url_to_task = url_to_user + '/todos'
-    res = requests.get(url_to_task)
-    tasks = res.json()
+def main():
+    """show how many of how many tasks is done by user
+    User id is passed as an argument"""
+    if len(sys.argv) > 1:
+        id = int(sys.argv[1])
+        if re.fullmatch(r"\d+", sys.argv[1]):
+            # get responses
+            emp_res = requests.get('{}/users/{}'.format(API, id)).json()
+            emp_username = emp_res['username']
+            emp_todos = requests.get(
+                '{}/users/{}/todos'.format(API, id)).json()
+            with open('{}.json'.format(id), 'w') as jsonfile:
+                user_data = [{
+                    "task": todo.get('title'),
+                    "completed": todo.get('completed'),
+                    "username": emp_username
+                } for todo in emp_todos]
 
-    task_list = []
-    for task in tasks:
-        TASK_COMPLETED_STATUS = task.get('completed')
-        TASK_TITLE = task.get('title')
-        task_list.append({
-            "task": TASK_TITLE,
-            "completed": TASK_COMPLETED_STATUS,
-            "username": user_data.get('username')
-        })
-
-    return task_list
+                user_json = {'{}'.format(id): user_data}
+                json.dump(user_json, jsonfile)
 
 
 if __name__ == '__main__':
-    USER_ID = sys.argv[1]
-    dict_data = {USER_ID: get_user_data(USER_ID)}
-
-    with open('{}.json'.format(USER_ID), 'w') as f:
-        json.dump(dict_data[USER_ID], f, indent=4)
+    main()
