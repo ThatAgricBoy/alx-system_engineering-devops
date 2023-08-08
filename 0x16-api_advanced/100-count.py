@@ -5,7 +5,7 @@ from collections import Counter
 
 
 def count_words(subreddit, word_list, after=None):
-    """Recursive"""
+    """Recurse"""
     user_agent = "MyRedditBot/1.0"
     url = f"https://www.reddit.com/r/{subreddit}/hot.json"
     params = {"after": after} if after else {}
@@ -30,10 +30,6 @@ def count_words(subreddit, word_list, after=None):
             for keyword, count in sorted_keywords:
                 print(f"{keyword}: {count}")
     elif response.status_code == 404:
-        return None
+        print("Invalid subreddit or no results found.")
     else:
         print(f"Error: {response.status_code}")
-        return None
-subreddit_name = "python"
-keywords = ["python", "java", "programming"]
-count_words(subreddit_name, keywords)
