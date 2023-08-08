@@ -3,6 +3,7 @@
    returns the number of subscribers"""
 import requests
 
+
 def number_of_subscribers(subreddit):
     """A function that returns the number of subscribers for a
     given subreddit"""
@@ -20,4 +21,3 @@ def number_of_subscribers(subreddit):
         return 0
     else:
         print(f"Error: {response.status_code}")
-        
