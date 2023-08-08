@@ -9,8 +9,8 @@ def count_words(subreddit, word_list, after=None):
     user_agent = "MyRedditBot/1.0"
     url = f"https://www.reddit.com/r/{subreddit}/hot.json"
     params = {"after": after} if after else {}
-    headers = {"User-Agent": user_agent}    
-    response = requests.get(url, headers=headers, params=params)    
+    headers = {"User-Agent": user_agent}
+    response = requests.get(url, headers=headers, params=params)
     if response.status_code == 200:
         data = response.json()
         posts = data["data"]["children"]
@@ -22,7 +22,8 @@ def count_words(subreddit, word_list, after=None):
                 if f' {keyword} ' in f' {title} ':
                     keyword_counter[keyword] += 1
         if "after" in data["data"] and data["data"]["after"] is not None:
-            return count_words(subreddit, word_list, after=data["data"]["after"])
+            return count_words(subreddit,
+                               word_list, after=data["data"]["after"])
         else:
             sorted_keywords = sorted(keyword_counter.items(),
                                      key=lambda item: (-item[1], item[0]))
