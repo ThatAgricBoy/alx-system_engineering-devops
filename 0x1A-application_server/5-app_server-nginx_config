@@ -6,7 +6,7 @@ server {
     listen      [::]:80 default_server ipv6only=on;
 
     # Use server IP as domain name
-    server_name 100.26.49.104;
+    server_name 54.146.78.93;
 
     # Customize HTTP response header
     add_header  X-Served-By 201321-web-01;
