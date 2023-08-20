@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 # Gracefully reloads Gunicorn.
 
-pgrep gunicorn | xargs | cut -d ' ' -f 1 | xargs kill -HUP
+gunicorn_pids=$(ps aux | grep '[g]unicorn' | awk '{print $2}')
+
+# Loop through the PIDs and gracefully restart each worker
+for pid in $gunicorn_pids; do
+    echo "Gracefully restarting Gunicorn worker $pid"
+    kill -HUP $pid
+done
